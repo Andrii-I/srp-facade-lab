@@ -27,14 +27,8 @@ public class RpgPlayer {
     }
 
     public void useItem(Item item) {
-        if (item.getName().equals("Stink Bomb"))
-        {
-            List<IEnemy> enemies = gameEngine.getEnemiesNear(this);
-
-            for (IEnemy enemy: enemies){
-                enemy.takeDamage(100);
-            }
-        }
+        ItemUser itemuser = new ItemUser();
+        itemuser.useItem(item, this, gameEngine);
     }
 
     public boolean pickUpItem(Item item) {
@@ -45,22 +39,8 @@ public class RpgPlayer {
         if (item.isUnique() && checkIfItemExistsInInventory(item))
             return false;
 
-        // Don't pick up items that give health, just consume them.
-        if (item.getHeal() > 0) {
-            health += item.getHeal();
-
-            if (health > maxHealth)
-                health = maxHealth;
-
-            if (item.getHeal() > 500) {
-                gameEngine.playSpecialEffect("green_swirly");
-            }
-
-            return true;
-        }
-
-        if (item.isRare())
-            gameEngine.playSpecialEffect("cool_swirly_particles");
+        ItemPickuper itempickuper = new ItemPickuper();
+        itempickuper.pickupItem(item, this, gameEngine);
 
         inventory.add(item);
 
@@ -97,6 +77,11 @@ public class RpgPlayer {
         }
 
         int damageToDeal = damage - armour;
+
+        if (calculateInventoryWeight() < carryingCapacity*0.5) {
+            damageToDeal *= 0.75;
+        }
+        
         health -= damageToDeal;
 
         gameEngine.playSpecialEffect("lots_of_gore");
