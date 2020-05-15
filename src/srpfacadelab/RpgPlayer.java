@@ -26,36 +26,13 @@ public class RpgPlayer {
         carryingCapacity = MAX_CARRYING_CAPACITY;
     }
 
-    public void useItem(Item item) {
-        ItemUser itemuser = new ItemUser();
-        itemuser.useItem(item, this, gameEngine);
-    }
-
-    public boolean pickUpItem(Item item) {
-        int weight = calculateInventoryWeight();
-        if (weight + item.getWeight() > carryingCapacity)
-            return false;
-
-        if (item.isUnique() && checkIfItemExistsInInventory(item))
-            return false;
-
-        ItemPickuper itempickuper = new ItemPickuper();
-        itempickuper.pickupItem(item, this, gameEngine);
-
-        inventory.add(item);
-
-        calculateStats();
-
-        return true;
-    }
-
-    private void calculateStats() {
+    public void calculateStats() {
         for (Item i: inventory) {
             armour += i.getArmour();
         }
     }
 
-    private boolean checkIfItemExistsInInventory(Item item) {
+    public boolean checkIfItemExistsInInventory(Item item) {
         for (Item i: inventory) {
             if (i.getId() == item.getId())
                 return true;
@@ -63,28 +40,12 @@ public class RpgPlayer {
         return false;
     }
 
-    private int calculateInventoryWeight() {
+    public int calculateInventoryWeight() {
         int sum=0;
         for (Item i: inventory) {
             sum += i.getWeight();
         }
         return sum;
-    }
-
-    public void takeDamage(int damage) {
-        if (damage < armour) {
-            gameEngine.playSpecialEffect("parry");
-        }
-
-        int damageToDeal = damage - armour;
-
-        if (calculateInventoryWeight() < carryingCapacity*0.5) {
-            damageToDeal *= 0.75;
-        }
-        
-        health -= damageToDeal;
-
-        gameEngine.playSpecialEffect("lots_of_gore");
     }
 
     public int getHealth() {
@@ -107,7 +68,7 @@ public class RpgPlayer {
         return armour;
     }
 
-    private void setArmour(int armour) {
+    public void setArmour(int armour) {
         this.armour = armour;
     }
 
@@ -117,5 +78,13 @@ public class RpgPlayer {
 
     private void setCarryingCapacity(int carryingCapacity) {
         this.carryingCapacity = carryingCapacity;
+    }
+
+    public IGameEngine getGameEngine() {
+        return this.gameEngine;
+    }
+
+    public void addToInventory(Item item) {
+        inventory.add(item);
     }
 }

@@ -3,12 +3,12 @@ package srpfacadelab;
 import java.util.List;
 
 public class ItemUser {
-
     public ItemUser() {
 
     }
 
-    public void useItem(Item item, RpgPlayer player, IGameEngine engine) {
+    public void useItem(Item item, RpgPlayer player) {
+        IGameEngine engine = player.getGameEngine();
         if (item.getName().equals("Stink Bomb"))
         {
             List<IEnemy> enemies = engine.getEnemiesNear(player);
